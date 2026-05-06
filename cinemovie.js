@@ -78,7 +78,7 @@ async function fetchMovies(query) {
     }
     errorElement.classList.remove('hidden')
 movieGrid.innerHTML=''
-result.textContent=''
+result.classList.add('hidden')
   }
 
 }
