@@ -82,6 +82,7 @@ async function fetchMovies(query) {
       errorElement.textContent = error.message
     }
     errorElement.classList.remove('hidden')
+movieGrid.innerHTML=''
   }
 
 }
