@@ -3,23 +3,18 @@ const inputElement = document.querySelector('.js-search-input')
 const errorElement = document.querySelector('.js-error')
 const result = document.querySelector('.js-results-count')
 const movieGrid = document.querySelector('.js-movies-grid')
-
-//import{vite_api_key} from './file.env'
+
 
 buttonElement.addEventListener('click', () => {
-  const searchInput = inputElement.value.trim()
-  //document.querySelector('.js-search-input').value=''
+  const searchInput = inputElement.value.trim()
   fetchMovies(searchInput)
 })
 
 
 
 
-const apikey = import.meta.env.VITE_API_KEY
-console.log(apikey)
-
-//console.log(data.results)
-
+const apikey = '0364623d9efdd87aaa14ca87b413be41'
+
 async function fetchMovies(query) {
   try {
     if (!query) {
@@ -89,13 +84,11 @@ movieGrid.innerHTML=''
 
 async function playTrailer(id) {
   try {
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apikey}`)
-    console.log(response)
+    const response = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apikey}`)
     if (!response.ok) {
       throw new Error(`Status code: ${response.status}`)
     }
-    const data = await response.json()
-    console.log(data)
+    const data = await response.json()
     const trailer = data.results.find((video) => {
       return video.type === 'Trailer' && video.site === 'YouTube'
     })
