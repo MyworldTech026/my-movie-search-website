@@ -121,6 +121,7 @@ async function playTrailer(id) {
 
 
 
+/*
 function click() {
   const movieCard = document.querySelectorAll('.js-movie-card')
   movieCard.forEach((card) => {
@@ -130,3 +131,4 @@ function click() {
     })
   })
 }
+*/
