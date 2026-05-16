@@ -3,18 +3,21 @@ const inputElement = document.querySelector('.js-search-input')
 const errorElement = document.querySelector('.js-error')
 const result = document.querySelector('.js-results-count')
 const movieGrid = document.querySelector('.js-movies-grid')
-
+
 
 buttonElement.addEventListener('click', () => {
-  const searchInput = inputElement.value.trim()
+  const searchInput = inputElement.value.trim()
   fetchMovies(searchInput)
+  // if(inputElement.value==='')
+  //  movieGrid.innerHTML =''
+  // result.innerHTML=''
 })
 
 
 
 
-const apikey = '0364623d9efdd87aaa14ca87b413be41'
-
+const apikey =`0364623d9efdd87aaa14ca87b413be41`
+
 async function fetchMovies(query) {
   try {
     if (!query) {
@@ -38,7 +41,82 @@ async function fetchMovies(query) {
     result.textContent = `Found ${foundMovie} results for ${query}`
     result.classList.remove('hidden')
 
-    let img = ''
+   renderMovie(data)
+  }
+  catch (error) {
+    if (error instanceof TypeError) {
+      errorElement.textContent = `No internet connection`
+    } else {
+      errorElement.textContent = error.message
+    }
+    errorElement.classList.remove('hidden')
+  }
+
+}
+
+async function playTrailer(id) {
+  try {
+    const response = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apikey}`)
+    if (!response.ok) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    const data = await response.json()
+    const trailer = data.results.find((video) => {
+      return video.type === 'Trailer' && video.site === 'YouTube'
+    })
+    if (trailer) {
+      window.open(`https://www.youtube.com/watch?v=${trailer.key}`)
+      errorElement.classList.add('hidden')
+    } else {
+      errorElement.textContent = `can't play video`
+      errorElement.classList.remove('hidden')
+    }
+
+
+  }
+  catch (error) {
+    if (error instanceof TypeError) {
+      errorElement.textContent = `No internet connection`
+    } else {
+      errorElement.textContent = error.message
+    }
+    errorElement.classList.remove('hidden')
+  }
+}
+
+
+setInterval(()=>{
+randomMovie()
+},86400000)
+
+async function randomMovie(){
+  const randomPage=Math.floor(Math.random()*500)+1
+  try{
+const response= await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apikey}&page=${randomPage}`)
+  if(!response.ok){
+    throw new Error(`can't fetch movie due to unstable network`)
+  }
+
+  const data= await response.json()
+  renderMovie(data)
+  }
+  catch(error){
+    if (error instanceof TypeError) {
+      errorElement.textContent = `No internet connection`
+    } else {
+      errorElement.textContent = error.message
+    }
+    errorElement.classList.remove('hidden')
+  }
+
+}
+
+
+randomMovie()
+
+
+function renderMovie(data){
+  let img = ''
     data.results.forEach((file) => {
 
       if (file.backdrop_path === null) {
@@ -68,61 +146,4 @@ async function fetchMovies(query) {
       const id = movieCard.dataset.movieId
       playTrailer(id)
     })
-
-  }
-  catch (error) {
-    if (error instanceof TypeError) {
-      errorElement.textContent = `No internet connection`
-    } else {
-      errorElement.textContent = error.message
-    }
-    errorElement.classList.remove('hidden')
-movieGrid.innerHTML=''
-result.classList.add('hidden')
-  }
-
 }
-
-async function playTrailer(id) {
-  try {
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apikey}`)
-    if (!response.ok) {
-      throw new Error(`Status code: ${response.status}`)
-    }
-    const data = await response.json()
-    const trailer = data.results.find((video) => {
-      return video.type === 'Trailer' && video.site === 'YouTube'
-    })
-    if (trailer) {
-      window.open(`https://www.youtube.com/watch?v=${trailer.key}`)
-      errorElement.classList.add('hidden')
-    } else {
-      errorElement.textContent = `can't play video`
-      errorElement.classList.remove('hidden')
-    }
-
-
-  }
-  catch (error) {
-    if (error instanceof TypeError) {
-      errorElement.textContent = `No internet connection`
-    } else {
-      errorElement.textContent = error.message
-    }
-    errorElement.classList.remove('hidden')
-  }
-}
-
-
-
-/*
-function click() {
-  const movieCard = document.querySelectorAll('.js-movie-card')
-  movieCard.forEach((card) => {
-    card.addEventListener('click', (e) => {
-      const id = card.dataset.movieId
-      console.log(id)
-    })
-  })
-}
-*/
